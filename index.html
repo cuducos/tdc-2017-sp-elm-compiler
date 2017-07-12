@@ -1,0 +1,650 @@
+---
+layout: presentation
+title: Problemas que o Elm resolve só com o compilador sem nada mais
+---
+class: middle, center
+
+# ![Elm](/imgs/elm.png)<br>Problemas que o Elm resolve<br> só com o compilador<br><small>sem nada mais</small>
+
+.big[[@cuducos](http://twitter.com/cuducos)<br>[cuducos.me](http://cuducos.me)]
+
+.watermark[[![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)]
+
+---
+class: middle, center, fullscreen
+
+![Elm, not ELM](/imgs/elm_not_elm.png)
+
+---
+class: middle, center, fullscreen
+
+![Elm escala?](/imgs/scale.jpg)]
+
+---
+class: middle, center, fullscreen
+
+![E se minha aplicação for muito grande?](/imgs/too_big.jpg)]
+
+---
+class: middle, center, fullscreen
+
+![Dá para usar com…?](/imgs/with.jpg)]
+
+---
+class: middle, center, fullscreen
+
+![No runtime exceptions](/imgs/no_runtime_exceptions.png)
+
+---
+class: middle, center
+
+# `$ elm-make Main.elm`&nbsp;&nbsp;.transparent[`--warn`]
+
+---
+class: middle, center
+
+## .big[.transparent[1]]<br>Propriedades que podem não existir
+
+---
+
+### ![JavaScript](/imgs/js.png)
+
+```javascript
+user = {
+  name: 'Eduardo Cuducos',
+  twitter: 'cuducos'
+}
+
+const getSocialMedia = (user) => user.facebook
+
+getSocialMedia(user)
+```
+
+--
+
+```
+undefined
+```
+
+---
+
+### ![Python](/imgs/python.png)
+
+```python
+class User:
+
+  def __init__(self, name, twitter):
+      self.name = name
+      self.twitter = twitter
+
+user = User('Eduardo Cuducos', 'cuducos')
+
+def get_social_media(user):
+    return user.facebook
+
+get_social_media(user)
+```
+
+--
+
+```
+AttributeError: 'User' object has no attribute 'facebook'
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+type alias User =
+    { name : String
+    , twitter : String
+    }
+
+
+getSocialMedia : User -> String
+getSocialMedia user =
+    user.facebook
+```
+
+--
+
+```
+-- TYPE MISMATCH ------------------------------------------------------ Main.elm
+
+`user` does not have a field named `facebook`.
+
+15|     user.facebook
+        ^^^^^^^^^^^^^
+The type of `user` is:
+
+    User
+
+Which does not contain a field named `facebook`.
+
+Hint: The record fields do not match up. One has name and twitter. The other has
+facebook.
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+type alias User =
+    { name : String
+    , twitter : String
+    }
+
+
+getSocialMedia : User -> String
+getSocialMedia user =
+    user.twitter
+```
+
+--
+
+```
+Success! Compiled 1 module.
+```
+
+---
+class: middle, center
+
+## Elm não te deixa com<br> o `undefined` na mão!
+
+---
+class: middle, center
+
+## .big[.transparent[2]]<br> Objetos que podem não existir
+
+---
+
+### ![JavaScript](/imgs/js.png)
+
+```javascript
+users = [
+    { name: 'Eduardo Cuducos', twitter: 'cuducos' },
+    { name: 'Hugo Bessa', twitter: 'hugobessaa' }
+]
+
+const firstUserName = (users) => users[0].name
+
+firstUserName(users)
+```
+
+--
+
+```
+'Eduardo Cuducos'
+```
+
+---
+
+### ![JavaScript](/imgs/js.png)
+
+```javascript
+users = []
+
+firstUserName(users)
+```
+
+--
+
+```
+TypeError: Cannot read property 'name' of undefined
+```
+
+---
+
+### ![Python](/imgs/python.png)
+
+```python
+users = [
+    User('Eduardo Cuducos', 'cuducos'),
+    User('Hugo Bessa', 'hugobessaa')
+]
+
+def first_user_name(users):
+    return users[0].name
+
+
+first_user_name(users)
+```
+
+--
+
+```
+'Eduardo Cuducos'
+```
+
+---
+
+### ![Python](/imgs/python.png)
+
+```python
+users = []
+
+first_user_name(users)
+```
+
+--
+
+```
+IndexError: list index out of range
+```
+
+--
+
+```python
+def first_user_name(users):
+    first_user, *_ = users
+    return first_use.name
+```
+
+--
+
+```
+ValueError: not enough values to unpack (expected at least 1, got 0)
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+firstUserName : List User -> String
+firstUserName users =
+    let
+        firstUser = List.head users
+    in
+        firstUser.name
+```
+
+--
+
+```
+-- TYPE MISMATCH --------------------------------------------- Main.elm
+
+`firstUser` does not have a field named `name`.
+
+29|    firstUser.name
+       ^^^^^^^^^^^^^^
+The type of `firstUser` is:
+
+    Maybe User
+
+Which does not contain a field named `name`.
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+firstUserName : List User -> String
+firstUserName users =
+    case List.head users of
+        Just user ->
+            user.name
+
+        Nothing ->
+            "User not found"
+```
+
+--
+
+```
+Success! Compiled 1 module.
+```
+
+---
+class: middle, center
+
+## Elm te obriga a preparar a<br> aplicação para casos raros, extremos!
+
+---
+class: middle, center
+
+## .big[.transparent[3]]<br>Missão impossível
+
+---
+
+### ![JavaScript](/imgs/js.png)
+
+```javascript
+const tomorrow = (today) => parseInt(today) + 1
+
+tomorrow('18')
+```
+
+--
+
+```
+19
+```
+
+---
+
+### ![JavaScript](/imgs/js.png)
+
+```javascript
+tomorrow(undefined)
+```
+
+--
+
+```
+NaN
+```
+
+---
+
+### ![Python](/imgs/python.png)
+
+
+```python
+def tomorrow(today):
+    return int(today) + 1
+
+tomorrow('18')
+```
+
+--
+
+```
+19
+```
+
+---
+
+### ![Python](/imgs/python.png)
+
+```python
+tomorrow(None)
+```
+
+--
+
+```
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'
+```
+
+--
+
+```python
+tomorrow('NaN')
+```
+
+--
+
+```
+ValueError: invalid literal for int() with base 10: 'NaN'
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+tomorrow : String -> Int
+tomorrow today =
+    (String.toInt today) + 1
+```
+
+--
+
+```
+-- TYPE MISMATCH ------------------------------------------------------ Main.elm
+
+The left argument of (+) is causing a type mismatch.
+
+45|      (String.toInt today) + 1
+          ^^^^^^^^^^^^^^^^^^
+(+) is expecting the left argument to be a:
+
+    number
+
+But the left argument is:
+
+    Result String Int
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+tomorrow : String -> Int
+tomorrow today =
+    case String.toInt today of
+        Ok day ->
+            day + 1
+
+        Err _ ->
+            Debug.crash "TODO"
+```
+
+```
+Success! Compiled 1 module.
+```
+
+---
+class: middle, center
+
+## Elm te obriga a se antecipar a erros<br> em tempo de execução.
+
+---
+class: middle, center
+
+## Mas e o `Debug.crash`?
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+view : String -> Html msg
+view today =
+    case String.toInt today of
+        Ok day ->
+            viewMyApp
+
+        Err error ->
+            viewErroMsg error
+```
+
+---
+class: middle, center
+
+## .big[.transparent[4]]<br>Ações não previstas
+
+---
+class: middle, center
+
+<button>-</button> .big[41] <button>+</button>
+
+---
+
+### ![JavaScript](/imgs/js.png)
+
+```javascript
+const counter = (state, action) => {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1
+    case 'DECREMENT':
+      return state - 1
+  }
+}
+```
+--
+
+```javascript
+const render = () => ReactDOM.render(
+  <p>
+    <button onClick={() => store.dispatch({ type: 'DECREMENT'})}>-</button>
+    {store.getSate()}
+    <button onClick={() => store.dispatch({ type: 'INCREMENT'})}>+</button>
+  </p>
+)
+```
+
+--
+
+<button>+</button>
+
+--
+
+.big[42]
+
+---
+class: middle, center
+
+<button>-</button> .big[21] <button>+</button><button>x2</button>
+
+---
+
+### ![JavaScript](/imgs/js.png)
+
+```javascript
+const render = () => ReactDOM.render(
+  <p>
+    <button onClick={() => store.dispatch({ type: 'DECREMENT'})}>-</button>
+    {store.getSate()}
+    <button onClick={() => store.dispatch({ type: 'INCREMENT'})}>+</button>
+    <button onClick={() => store.dispatch({ type: 'DOUBLE'})}>x2</button>
+  </p>
+)
+```
+
+--
+
+<button>x2</button>
+
+--
+
+.big[21]
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+type Msg = Increment | Decrement
+
+
+update : Msg -> Int -> Int
+update msg model =
+    case msg of
+        Increment -> model + 1
+        Decrement -> model - 1
+
+
+view : Int -> Html Msg
+view model =
+    p
+        []
+        [ button [ onClick Increment ] [ text "+" ]
+        , text (toString model)
+        , button [ onClick Decrement ] [ text "-" ]
+        ]
+```
+
+--
+
+<button>-</button> .big[21] <button>+</button>
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+
+```elm
+view : Int -> Html Msg
+view model =
+    p
+        []
+        [ button [ onClick Increment ] [ text "+" ]
+        , text (toString model)
+        , button [ onClick Decrement ] [ text "-" ]
+        , button [ onClick Double ] [ text "2x" ]
+        ]
+```
+
+--
+
+```
+-- NAMING ERROR ------------------------------------------------------- Main.elm
+
+Cannot find variable `Double`
+
+82|         , button [ onClick Double ] [ text "2x" ]
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+type Msg = Increment | Decrement | Double
+```
+
+--
+
+```
+-- MISSING PATTERNS --------------------------------------------------- Main.elm
+
+This `case` does not have branches for all possibilities.
+
+68|>    case msg of
+69|>        Increment ->
+70|>            model + 1
+71|>
+72|>        Decrement ->
+73|>            model - 1
+
+You need to account for the following values:
+
+    Main.Double
+
+Add a branch to cover this pattern!
+```
+
+---
+
+### ![Elm](/imgs/elm.png)
+
+```elm
+update : Msg -> Int -> Int
+update msg model =
+    case msg of
+        Increment -> model + 1
+        Decrement -> model - 1
+        Double -> model * 2
+```
+
+--
+
+```
+Success! Compiled 1 module.
+```
+
+---
+class: middle, center
+
+## A arquitetura do Elm te dá garantia de que todas<br> as ações dos usuários estão previstas!
+
+---
+class: middle, center
+
+## .transparent[“Quem aprendeu algo novo hoje?”<br>&mdash; Raymond Hettinger]
+
+---
+class: middle, center
+
+## Muito obrigado : )
+
+.big[[@cuducos](http://twitter.com/cuducos)<br>[cuducos.me](http://cuducos.me)]
+
+.watermark[[![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)]

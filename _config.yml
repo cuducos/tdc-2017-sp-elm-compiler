@@ -1,0 +1,9 @@
+sass:
+  sass_dir: css
+  style: compressed
+exclude:
+  - elm-examples/
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - setup.rb
