@@ -1,6 +1,6 @@
 # Problemas que o Elm resolve só com o compilador — sem nada mais
 
-Slides da palestra apresentada no TDC São Paulo 2017, na trilha Programação Funcional
+Slides da palestra apresentada no TDC São Paulo 2017, na trilha Programação Funcional.
 
 ## Instruções
 

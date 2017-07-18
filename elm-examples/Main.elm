@@ -57,6 +57,29 @@ tomorrow today =
             Debug.crash "TODO"
 
 
+
+-- type Msg
+--     = Increment
+--     | Decrement
+--
+-- update : Msg -> Int -> Int
+-- update msg model =
+--     case msg of
+--         Increment ->
+--             model + 1
+--         Decrement ->
+--             model - 1
+--
+-- view : Int -> Html Msg
+-- view model =
+--     p
+--         []
+--         [ button [ onClick Increment ] [ text "+" ]
+--         , text (toString model)
+--         , button [ onClick Decrement ] [ text "-" ]
+--         ]
+
+
 type Msg
     = Increment
     | Decrement

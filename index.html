@@ -424,6 +424,7 @@ tomorrow today =
         Err _ ->
             Debug.crash "TODO"
 ```
+--
 
 ```
 Success! Compiled 1 module.
@@ -457,7 +458,7 @@ view today =
 ---
 class: middle, center
 
-## .big[.transparent[4]]<br>Ações não previstas
+## .big[.transparent[4]]<br>Ações de usuário não previstas
 
 ---
 class: middle, center
@@ -484,7 +485,7 @@ const counter = (state, action) => {
 const render = () => ReactDOM.render(
   <p>
     <button onClick={() => store.dispatch({ type: 'DECREMENT'})}>-</button>
-    {store.getSate()}
+    {store.getState()}
     <button onClick={() => store.dispatch({ type: 'INCREMENT'})}>+</button>
   </p>
 )
